@@ -1,0 +1,12 @@
+name: task-issue
+description: File an issue report.
+title: Issue Form
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the issue
+      placeholder: Type something...
+    validations:
+      required: true

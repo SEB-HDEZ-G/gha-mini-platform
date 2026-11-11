@@ -1,0 +1,12 @@
+name: bug-issue
+description: File a bug report.
+title: Bug Report
+body:
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to reproduce
+      description: Describe how to reproduce the bug and describe expected vs. actual results.
+      placeholder: Type something...
+    validations:
+      required: true
