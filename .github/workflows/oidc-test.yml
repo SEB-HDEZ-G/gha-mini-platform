@@ -1,0 +1,36 @@
+name: OIDC Test
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  # Lets the job request a token
+  # Does not grant any write access to the repo
+  id-token: write
+  contents: read
+
+jobs:
+  oidc-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Show OIDC claims
+        run: |
+          TOKEN=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
+          TOKEN="$TOKEN" python3 - <<'EOF'
+          import os, json, base64
+          payload = os.environ["TOKEN"].split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+          print({k: claims[k] for k in ("iss", "aud", "sub")})
+          EOF
+      - name: Configure credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: eu-west-1
+      - name: Verify identity
+        run: aws sts get-caller-identity
