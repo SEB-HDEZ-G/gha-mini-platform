@@ -17,6 +17,9 @@ data "aws_caller_identity" "current" {}
 locals {
   repo         = "SEB-HDEZ-G/gha-mini-platform"
   state_bucket = "tfstate-${data.aws_caller_identity.current.account_id}-gha-mini-platform"
+
+  # Subject prefix exactly as it appears in the token (owner and repo IDs included)
+  sub_prefix = "repo:SEB-HDEZ-G@141745040/gha-mini-platform@1453287865"
 }
 
 # ---------- Remote state bucket ----------
@@ -74,8 +77,8 @@ data "aws_iam_policy_document" "plan_trust" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:${local.repo}:pull_request",
-        "repo:${local.repo}:ref:refs/heads/main",
+        "repo:${local.sub_prefix}:pull_request",
+        "repo:${local.sub_prefix}:ref:refs/heads/main",
       ]
     }
   }
