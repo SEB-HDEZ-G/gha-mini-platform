@@ -54,7 +54,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "tfstate" {
 # ---------- GitHub OIDC provider ----------
 resource "aws_iam_openid_connect_provider" "github" {
   url            = "https://token.actions.githubusercontent.com"
-  client_id_list = ["sts:amazonaws.com"]
+  client_id_list = ["sts.amazonaws.com"] # Always check the format
 }
 
 # ---------- Plan role (read-only, usable from PRs and main) ----------
